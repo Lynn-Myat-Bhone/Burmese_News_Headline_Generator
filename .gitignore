@@ -3,8 +3,7 @@ dataset
 NLP
 venv
 record.py
-utilities
-save_file
 dict-words.txt
 stopwords.txt
 model_v2
+seq2seq_headline_model
