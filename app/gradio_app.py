@@ -19,7 +19,7 @@ model.eval()
 print(f"Model loaded on {device}")
 
 
-def generate_headline(article_text):
+def generate_headline_mt5(article_text):
     """Generate a single headline with default parameters"""
     if not article_text.strip():
         return "Please enter article text."
@@ -88,7 +88,7 @@ with gr.Blocks(title="Burmese Headline Generator", theme=gr.themes.Soft()) as de
             )
 
     # Connect button
-    generate_btn.click(fn=generate_headline, inputs=article_input, outputs=output)
+    generate_btn.click(fn=generate_headline_mt5, inputs=article_input, outputs=output)
 
 if __name__ == "__main__":
     demo.launch(share=False)
