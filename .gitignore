@@ -7,3 +7,5 @@ dict-words.txt
 stopwords.txt
 model_v2
 seq2seq_headline_model
+model_v3
+utilities
