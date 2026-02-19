@@ -13,9 +13,6 @@ from model_utils import (
 # Configuration
 MAX_TEXT_LEN = 256
 MAX_HEAD_LEN = 20
-EMBEDDING_DIM = 300
-HIDDEN_DIM = 256
-NUM_LAYERS = 1
 
 # Model file paths (change these to your file locations)
 MODEL_PATH = "seq2seq_headline_model/seq2seq_model_improved.pth"  # Update this path
@@ -32,6 +29,20 @@ processor = MyanmarTextPreprocessor()
 model = None
 word2idx = None
 idx2word = None
+
+
+def _infer_num_layers(state_dict, prefix):
+    layer_indices = []
+    for key in state_dict.keys():
+        if key.startswith(prefix) and key.endswith(".weight_ih_l0"):
+            layer_indices.append(0)
+        elif key.startswith(prefix) and ".weight_ih_l" in key and "_reverse" not in key:
+            try:
+                layer_idx = int(key.split(".weight_ih_l")[1].split(".")[0])
+                layer_indices.append(layer_idx)
+            except ValueError:
+                continue
+    return (max(layer_indices) + 1) if layer_indices else 1
 
 
 def load_model_and_vocab(model_path, vocab_path):
@@ -56,18 +67,27 @@ def load_model_and_vocab(model_path, vocab_path):
     print(f"✓ Loaded vocabulary: {vocab_size} words")
     print(f"✓ Special tokens: {[k for k in word2idx.keys() if k.startswith('<')]}")
     
+    # Load weights first to infer architecture
+    state_dict = torch.load(model_path, map_location=DEVICE)
+    if "encoder.weight_ih_l0" not in state_dict:
+        raise ValueError("Checkpoint missing encoder.weight_ih_l0; cannot infer model dimensions")
+
+    embedding_dim = state_dict["encoder.weight_ih_l0"].shape[1]
+    hidden_dim = state_dict["encoder.weight_ih_l0"].shape[0] // 4
+    num_layers = _infer_num_layers(state_dict, "encoder")
+
     # Create model
     pad_idx = word2idx["<pad>"]
     model = BiLSTMSeq2SeqWithAttention(
         vocab_size=vocab_size,
-        embedding_dim=EMBEDDING_DIM,
-        hidden_dim=HIDDEN_DIM,
-        num_layers=NUM_LAYERS,
+        embedding_dim=embedding_dim,
+        hidden_dim=hidden_dim,
+        num_layers=num_layers,
         pad_idx=pad_idx
     ).to(DEVICE)
     
     # Load weights
-    model.load_state_dict(torch.load(model_path, map_location=DEVICE))
+    model.load_state_dict(state_dict)
     model.eval()
     
     print("✓ Model loaded successfully!")
@@ -162,9 +182,9 @@ def create_interface():
             ### Architecture Details
             - **Model Type:** BiLSTM Seq2Seq with Attention Mechanism
             - **Tokenization:** Syllable-level (Myanmar script)
-            - **Embedding Dimension:** 300
-            - **Hidden Units:** 256
-            - **LSTM Layers:** 1 (Bidirectional Encoder + Unidirectional Decoder)
+            - **Embedding Dimension:** {model.embedding_dim}
+            - **Hidden Units:** {model.hidden_dim}
+            - **LSTM Layers:** {model.num_layers} (Bidirectional Encoder + Unidirectional Decoder)
             - **Max Input Length:** 256 syllables
             - **Max Output Length:** 20 syllables
             - **Device:** {DEVICE}

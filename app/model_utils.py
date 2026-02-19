@@ -26,15 +26,16 @@ class BiLSTMSeq2SeqWithAttention(nn.Module):
         self.num_layers = num_layers
         
         self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx=pad_idx)
+        dropout = 0.3 if num_layers > 1 else 0.0
         self.encoder = nn.LSTM(embedding_dim, hidden_dim, num_layers, 
-                              batch_first=True, bidirectional=True, dropout=0.3)
+                      batch_first=True, bidirectional=True, dropout=dropout)
         
         self.bridge_h = nn.Linear(hidden_dim * 2, hidden_dim)
         self.bridge_c = nn.Linear(hidden_dim * 2, hidden_dim)
         
         self.attention = nn.Linear(hidden_dim * 3, 1)
         self.decoder = nn.LSTM(embedding_dim + hidden_dim * 2, hidden_dim, 
-                               num_layers, batch_first=True, dropout=0.3)
+                       num_layers, batch_first=True, dropout=dropout)
         self.fc = nn.Linear(hidden_dim, vocab_size)
     
     def forward(self, src, tgt, teacher_forcing_ratio=0.5):
