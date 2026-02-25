@@ -70,18 +70,6 @@ If you have trained checkpoints, place them in a clear path and update the app o
 
 There are several exploratory notebooks across `mt5/`, `mmgpt/`, and `train/` demonstrating training runs, data diagnostics, and inference examples. These are useful for reproducing experiments and understanding preprocessing choices.
 
-## Contributing
-
-Contributions are welcome. Suggested workflow:
-
-1. Fork the repo and create a feature branch.
-2. Add tests or small reproducible examples for changes.
-3. Open a pull request with a clear description of changes.
-
-## Notes / Caveats
-
-- Model training, especially for transformers, requires sufficient GPU memory and may need additional libraries (accelerate, Transformers with proper CUDA support).
-- Check `mt5/requirements.txt` before attempting large-scale training.
 
 ## License
 
