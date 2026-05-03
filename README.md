@@ -19,7 +19,7 @@ It focuses on:
 
 ### Gradio Interface
 
-![Demo UI](demoUi.png)
+![Demo UI](demoUI.png)
 
 ---
 
