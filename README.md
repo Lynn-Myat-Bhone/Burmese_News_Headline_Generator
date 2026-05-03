@@ -1,77 +1,141 @@
 # Burmese News Headline Generator
 
-A collection of models, training scripts, and apps for generating Burmese (Myanmar) news headlines from article text. This repository includes experiments with LSTM-based sequence models, transformer-based approaches (mBART / mT5), utilities for training / evaluation, and Gradio demo apps for quick inference.
+Transforming Burmese news articles into concise, meaningful headlines using deep learning models including BiLSTM, mT5, and mBART-50.
 
-## Features
-- Pre-built Gradio demo interfaces for quick inference (`app/`).
-- Training and inference scripts for mT5 and other models (`mt5/`).
-- LSTM experiments and notebooks in `train/` and `train/*.ipynb`.
-- Utilities for data validation and evaluation.
+---
 
-## Repo structure
+## Overview
 
-- `app/` — Gradio apps and model utilities:
-	- `gradio_app.py` — main Gradio demo (generic)
-	- `gradio_app_mbart.py` — demo for mBART-based model
-	- `gradio_app_lstm.py` — demo for LSTM-based headline generator
-	- `model_utils.py` — helper functions used by apps
-- `mt5/` — mT5 training, inference and evaluation scripts
-	- `train_burmese_headlines.py` — training script
-	- `inference.py` — inference helper for mt5 models
-	- `evaluate_model.py` — evaluation utilities
-- `mmgpt/` — experiments and notebooks for MyanmarGPT-style models
-- `train/` — training notebooks and diagnostic scripts (LSTM experiments, fixes)
-- `dict-words.txt`, `stopwords.txt` — auxiliary data used by preprocessing
-- `requirements.txt` — top-level Python dependencies for demos and utilities
+This project builds and compares multiple NLP architectures for **Burmese news headline generation**, a sequence-to-sequence text generation task.
 
-## Requirements
-- Python 3.8 or later
-- Recommended: a virtual environment (venv / conda)
-- Install dependencies:
+It focuses on:
+- Low-resource language NLP (Burmese)
+- Model comparison (LSTM vs Transformers)
+- Full pipeline: training → evaluation → inference → demo
+
+---
+
+## Live Demo
+
+### Gradio Interface
+
+![Demo UI](assets/demo.png)
+
+---
+
+## Problem Statement
+
+Generating accurate and concise headlines from Burmese news articles is challenging due to:
+
+- Low-resource language limitations
+- Complex sentence structures
+- Lack of large-scale labeled datasets
+- Need for semantic compression of long text
+
+---
+
+## Dataset
+
+- **Source**: Kaggle (Burmese News Dataset - DVB, 2019–2024)
+- **Total Articles**: 15,899
+- **Train / Validation Split**: 80 / 20
+- **Test Set**: 3,000 samples
+
+### Preprocessing
+
+- Removed duplicate articles  
+- Removed HTML tags  
+- Normalized Unicode text  
+- Filtered very short articles  
+
+---
+
+## Models
+
+### mT5-small
+- Multilingual transformer model  
+- Balanced performance and efficiency  
+- Best trade-off model  
+
+---
+
+### mBART-50
+- Large multilingual transformer  
+- Highest semantic quality  
+- Best overall performance  
+
+---
+
+### BiLSTM (Baseline)
+- Sequence-to-sequence LSTM model  
+- Fast inference  
+- Weak semantic understanding (baseline)
+
+---
+
+## Results
+
+| Model     | ROUGE-L | BLEU-4 | BERTScore F1 | Quality |
+|----------|--------|--------|--------------|---------|
+| BiLSTM   | 0.76   | 21.95  | 71.96        | Low     |
+| mT5      | 5.38   | 64.04  | 85.81        | High    |
+| mBART-50 | 3.48   | 49.85  | 81.24        | Highest |
+
+---
+
+##  Key Insights
+
+- Transformer models significantly outperform BiLSTM baseline  
+- mBART-50 achieves the highest semantic similarity  
+- mT5 provides the best balance between performance and efficiency  
+- ROUGE scores are lower due to abstractive generation nature  
+
+---
+## Project Structure
+app/        → Gradio demo UI  
+mt5/        → mT5 training, inference, evaluation  
+train/      → LSTM experiments  
+mmgpt/      → experimental models  
+assets/     → screenshots for README  
+
+---
+
+## How to Run
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate   # or .venv\Scripts\activate on Windows
+git clone https://github.com/your-username/Burmese_News_Headline_Generator.git
+cd Burmese_News_Headline_Generator
+
 pip install -r requirements.txt
-# If you plan to train or run mt5 scripts, see mt5/requirements.txt
-```
 
-## Quickstart — Run Gradio demo
-
-Run the simple demo 
-
-```bash
-# generic demo
 python app/gradio_app_main.py
 ```
+---
 
-Open the displayed local URL to try the interface.
+## Tech Stack
+- Python
+- PyTorch / HuggingFace Transformers
+- mT5, mBART-50
+- FastText (for LSTM embeddings)
+- Gradio (UI)
 
-## Inference and Training
+---
+## Key Contributions
+- Built and compared 3 NLP architectures
+- Designed full training and evaluation pipeline
+- Conducted benchmarking for Burmese NLP task
+- Developed interactive Gradio demo
 
-- Inference for mT5: see `mt5/inference.py` for helper functions and usage patterns.
-- Train or fine-tune mT5 with `mt5/train_burmese_headlines.py`. Large models require GPUs and appropriate environment setup.
-- LSTM experiments and small-scale training are available in the `train/` notebooks.
+---
+## Future Improvements
+- Improve Burmese tokenization techniques
+- Add reinforcement learning for better headline quality
+- Deploy as web API service
+- Add human evaluation study
 
-## Evaluation & Validation
-
-- Use `mt5/evaluate_model.py` to compute evaluation metrics for generated headlines.
-- Use `mt5/validate_data.py` (or `train/validate_data.py` where provided) to validate dataset formatting and tokenization.
-
-## Data
-
-This repository does not include large model checkpoints or proprietary datasets. Small helper files included:
-- `dict-words.txt` — word list used in preprocessing
-- `stopwords.txt` — Burmese stopwords used for cleaning
-
-If you have trained checkpoints, place them in a clear path and update the app or inference script config to point to the model directory.
-
-## Notebooks
-
-There are several exploratory notebooks across `mt5/`, `mmgpt/`, and `train/` demonstrating training runs, data diagnostics, and inference examples. These are useful for reproducing experiments and understanding preprocessing choices.
-
-
-## License
-
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
-
+---
+## Authors
+- Lynn Myat Bhone
+- Kyaw Thuta Oo
+- Pyae Phyo Maung
+- Htet Aung Hlyan
