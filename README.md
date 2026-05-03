@@ -75,7 +75,7 @@ Generating accurate and concise headlines from Burmese news articles is challeng
 
 ## Results
 
-| Model     | ROUGE-L | BLEU-4 | BERTScore F1 | Quality |
+| Model    | ROUGE-L| BLEU-4 | BERTScore F1 | Quality |
 |----------|--------|--------|--------------|---------|
 | BiLSTM   | 0.76   | 21.95  | 71.96        | Low     |
 | mT5      | 5.38   | 64.04  | 85.81        | High    |
